@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+costs.jsonl
+memory.jsonl
+rag_data/
+memory_data/
+chroma_db/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
