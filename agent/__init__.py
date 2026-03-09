@@ -1,1 +1,3 @@
-IiIiTXVsdGktcHJvdmlkZXIgQUkgQWdlbnQgcGFja2FnZS4iIiIKCl9fdmVyc2lvbl9fID0gIjEuMC4wIgo=
+"""Multi-provider AI Agent package."""
+
+__version__ = "1.0.0"
