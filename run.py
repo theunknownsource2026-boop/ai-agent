@@ -1,1 +1,59 @@
-IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiIKTGF1bmNoIHRoZSBBSSBBZ2VudC4KClVzYWdlOgogICAgcHl0aG9uIHJ1bi5weSAgICAgICAgICAjIFN0YXJ0IHRoZSBpbnRlcmFjdGl2ZSBhZ2VudAogICAgcHl0aG9uIHJ1bi5weSAtLXRlc3QgICAjIFRlc3Qgd2hpY2ggcHJvdmlkZXJzIGFyZSBhdmFpbGFibGUKIiIiCmltcG9ydCBzeXMKaW1wb3J0IG9zCgojIEFkZCBwcm9qZWN0IHJvb3QgdG8gcGF0aApzeXMucGF0aC5pbnNlcnQoMCwgb3MucGF0aC5kaXJuYW1lKG9zLnBhdGguYWJzcGF0aChfX2ZpbGVfXykpKQoKCmRlZiB0ZXN0X3Byb3ZpZGVycygpOgogICAgIiIiUXVpY2sgY29ubmVjdGl2aXR5IHRlc3QgZm9yIGFsbCBwcm92aWRlcnMuIiIiCiAgICBmcm9tIHJpY2guY29uc29sZSBpbXBvcnQgQ29uc29sZQogICAgZnJvbSByaWNoLnRhYmxlIGltcG9ydCBUYWJsZQogICAgY29uc29sZSA9IENvbnNvbGUoKQoKICAgIGZyb20gYWdlbnQucHJvdmlkZXJzLm9wZW5haV9wcm92aWRlciBpbXBvcnQgT3BlbkFJUHJvdmlkZXIKICAgIGZyb20gYWdlbnQucHJvdmlkZXJzLmdyb3FfcHJvdmlkZXIgaW1wb3J0IEdyb3FQcm92aWRlcgogICAgZnJvbSBhZ2VudC5wcm92aWRlcnMubWlzdHJhbF9wcm92aWRlciBpbXBvcnQgTWlzdHJhbFByb3ZpZGVyCiAgICBmcm9tIGFnZW50LnByb3ZpZGVycy5vbGxhbWFfcHJvdmlkZXIgaW1wb3J0IE9sbGFtYVByb3ZpZGVyCgogICAgdGFibGUgPSBUYWJsZSh0aXRsZT0iUHJvdmlkZXIgU3RhdHVzIikKICAgIHRhYmxlLmFkZF9jb2x1bW4oIlByb3ZpZGVyIiwgc3R5bGU9ImJvbGQiKQogICAgdGFibGUuYWRkX2NvbHVtbigiU3RhdHVzIikKICAgIHRhYmxlLmFkZF9jb2x1bW4oIkRlZmF1bHQgTW9kZWwiKQoKICAgIGZvciBuYW1lLCBQcm92Q2xhc3MgaW4gWwogICAgICAgICgiT3BlbkFJIiwgT3BlbkFJUHJvdmlkZXIpLAogICAgICAgICgiR3JvcSIsIEdyb3FQcm92aWRlciksCiAgICAgICAgKCJNaXN0cmFsIiwgTWlzdHJhbFByb3ZpZGVyKSwKICAgICAgICAoIk9sbGFtYSIsIE9sbGFtYVByb3ZpZGVyKSwKICAgIF06CiAgICAgICAgdHJ5OgogICAgICAgICAgICBwID0gUHJvdkNsYXNzKCkKICAgICAgICAgICAgaWYgcC5pc19hdmFpbGFibGUoKToKICAgICAgICAgICAgICAgIHRhYmxlLmFkZF9yb3cobmFtZSwgIltncmVlbl1BdmFpbGFibGVbL2dyZWVuXSIsIHAuX2RlZmF1bHRfbW9kZWwpCiAgICAgICAgICAgIGVsc2U6CiAgICAgICAgICAgICAgICB0YWJsZS5hZGRfcm93KG5hbWUsICJbeWVsbG93XU5vdCBjb25maWd1cmVkWy95ZWxsb3ddIiwgIi0iKQogICAgICAgIGV4Y2VwdCBFeGNlcHRpb24gYXMgZToKICAgICAgICAgICAgdGFibGUuYWRkX3JvdyhuYW1lLCBmIltyZWRdRXJyb3I6IHtlfVsvcmVkXSIsICItIikKCiAgICBjb25zb2xlLnByaW50KHRhYmxlKQoKICAgIGZyb20gYWdlbnQuYnVkZ2V0IGltcG9ydCBCdWRnZXRUcmFja2VyCiAgICBidCA9IEJ1ZGdldFRyYWNrZXIoKQogICAgY29uc29sZS5wcmludChmIlxuQnVkZ2V0OiB7YnQuZ2V0X3N1bW1hcnkoKX0iKQoKCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICBpZiAiLS10ZXN0IiBpbiBzeXMuYXJndjoKICAgICAgICB0ZXN0X3Byb3ZpZGVycygpCiAgICBlbHNlOgogICAgICAgIGZyb20gYWdlbnQubWFpbiBpbXBvcnQgbWFpbgogICAgICAgIG1haW4oKQo=
+#!/usr/bin/env python3
+"""
+Launch the AI Agent.
+
+Usage:
+    python run.py          # Start the interactive agent
+    python run.py --test   # Test which providers are available
+"""
+import sys
+import os
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+
+def test_providers():
+    """Quick connectivity test for all providers."""
+    from rich.console import Console
+    from rich.table import Table
+    console = Console()
+
+    from agent.providers.openai_provider import OpenAIProvider
+    from agent.providers.groq_provider import GroqProvider
+    from agent.providers.mistral_provider import MistralProvider
+    from agent.providers.ollama_provider import OllamaProvider
+
+    table = Table(title="Provider Status")
+    table.add_column("Provider", style="bold")
+    table.add_column("Status")
+    table.add_column("Default Model")
+
+    for name, ProvClass in [
+        ("OpenAI", OpenAIProvider),
+        ("Groq", GroqProvider),
+        ("Mistral", MistralProvider),
+        ("Ollama", OllamaProvider),
+    ]:
+        try:
+            p = ProvClass()
+            if p.is_available():
+                table.add_row(name, "[green]Available[/green]", p._default_model)
+            else:
+                table.add_row(name, "[yellow]Not configured[/yellow]", "-")
+        except Exception as e:
+            table.add_row(name, f"[red]Error: {e}[/red]", "-")
+
+    console.print(table)
+
+    from agent.budget import BudgetTracker
+    bt = BudgetTracker()
+    console.print(f"\nBudget: {bt.get_summary()}")
+
+
+if __name__ == "__main__":
+    if "--test" in sys.argv:
+        test_providers()
+    else:
+        from agent.main import main
+        main()
