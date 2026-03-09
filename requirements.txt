@@ -1,10 +1,1 @@
-openai>=1.12.0
-groq>=0.4.0
-mistralai>=0.1.0
-chromadb>=0.4.22
-sentence-transformers>=2.3.0
-rich>=13.7.0
-python-dotenv>=1.0.0
-httpx>=0.26.0
-duckduckgo-search>=4.1.0
-PyPDF2>=3.0.0
+b3BlbmFpPj0xLjEyLjAKZ3JvcT49MC40LjAKbWlzdHJhbGFpPj0wLjEuMApjaHJvbWFkYj49MC40LjIyCnNlbnRlbmNlLXRyYW5zZm9ybWVycz49Mi4zLjAKcmljaD49MTMuNy4wCnB5dGhvbi1kb3RlbnY+PTEuMC4wCmh0dHB4Pj0wLjI2LjAKZHVja2R1Y2tnby1zZWFyY2g+PTQuMS4wClB5UERGMj49My4wLjAK
