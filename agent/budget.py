@@ -1,1 +1,152 @@
-IiIiCkJ1ZGdldCB0cmFja2VyIGZvciBBSSBBUEkgc3BlbmRpbmcuCgpMb2dzIGV2ZXJ5IEFQSSBjYWxsIHRvIGEgYGBjb3N0cy5qc29ubGBgIGZpbGUgYW5kIHByb3ZpZGVzIGhlbHBlcnMgdG8KcXVlcnkgZGFpbHkgLyBtb250aGx5IHRvdGFscyBhbmQgZW5mb3JjZSBzcGVuZGluZyBsaW1pdHMuCiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IGpzb24KaW1wb3J0IGxvZ2dpbmcKZnJvbSBkYXRldGltZSBpbXBvcnQgZGF0ZXRpbWUsIGRhdGUKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmZyb20gdHlwaW5nIGltcG9ydCBPcHRpb25hbAoKZnJvbSBhZ2VudCBpbXBvcnQgY29uZmlnCgpsb2dnZXIgPSBsb2dnaW5nLmdldExvZ2dlcihfX25hbWVfXykKCiMgRGVmYXVsdCBjb3N0IGxvZyBsaXZlcyBpbiB0aGUgcHJvamVjdCByb290Cl9ERUZBVUxUX0NPU1RfRklMRSA9IFBhdGgoX19maWxlX18pLnJlc29sdmUoKS5wYXJlbnQucGFyZW50IC8gImNvc3RzLmpzb25sIgoKCmNsYXNzIEJ1ZGdldFRyYWNrZXI6CiAgICAiIiJUcmFjayBBUEkgc3BlbmRpbmcgYW5kIGVuZm9yY2UgYnVkZ2V0IGxpbWl0cy4iIiIKCiAgICBkZWYgX19pbml0X18oc2VsZiwgY29zdF9maWxlOiBzdHIgfCBQYXRoIHwgTm9uZSA9IE5vbmUpOgogICAgICAgIHNlbGYuX2Nvc3RfZmlsZSA9IFBhdGgoY29zdF9maWxlKSBpZiBjb3N0X2ZpbGUgZWxzZSBfREVGQVVMVF9DT1NUX0ZJTEUKICAgICAgICAjIEVuc3VyZSB0aGUgZmlsZSBleGlzdHMKICAgICAgICBzZWxmLl9jb3N0X2ZpbGUudG91Y2goZXhpc3Rfb2s9VHJ1ZSkKCiAgICAjIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgIyBMb2dnaW5nCiAgICAjIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKICAgIGRlZiBsb2dfY2FsbCgKICAgICAgICBzZWxmLAogICAgICAgIG1vZGVsOiBzdHIsCiAgICAgICAgcHJvdmlkZXI6IHN0ciwKICAgICAgICBpbnB1dF90b2tlbnM6IGludCwKICAgICAgICBvdXRwdXRfdG9rZW5zOiBpbnQsCiAgICApIC0+IGZsb2F0OgogICAgICAgICIiIgogICAgICAgIENhbGN1bGF0ZSBjb3N0IGZvciBhbiBBUEkgY2FsbCBhbmQgYXBwZW5kIGl0IHRvIHRoZSBjb3N0IGxvZy4KCiAgICAgICAgUmV0dXJucyB0aGUgY29zdCBpbiBVU0QgZm9yIHRoaXMgc2luZ2xlIGNhbGwuCiAgICAgICAgIiIiCiAgICAgICAgcHJpY2luZyA9IGNvbmZpZy5DT1NUX1BFUl8xS19UT0tFTlMuZ2V0KAogICAgICAgICAgICBtb2RlbCwgeyJpbnB1dCI6IDAuMCwgIm91dHB1dCI6IDAuMH0KICAgICAgICApCiAgICAgICAgY29zdCA9ICgKICAgICAgICAgICAgaW5wdXRfdG9rZW5zICogcHJpY2luZ1siaW5wdXQiXSArIG91dHB1dF90b2tlbnMgKiBwcmljaW5nWyJvdXRwdXQiXQogICAgICAgICkgLyAxMDAwLjAKCiAgICAgICAgZW50cnkgPSB7CiAgICAgICAgICAgICJ0aW1lc3RhbXAiOiBkYXRldGltZS51dGNub3coKS5pc29mb3JtYXQoKSArICJaIiwKICAgICAgICAgICAgImRhdGUiOiBkYXRlLnRvZGF5KCkuaXNvZm9ybWF0KCksCiAgICAgICAgICAgICJtb2RlbCI6IG1vZGVsLAogICAgICAgICAgICAicHJvdmlkZXIiOiBwcm92aWRlciwKICAgICAgICAgICAgImlucHV0X3Rva2VucyI6IGlucHV0X3Rva2VucywKICAgICAgICAgICAgIm91dHB1dF90b2tlbnMiOiBvdXRwdXRfdG9rZW5zLAogICAgICAgICAgICAiY29zdF91c2QiOiByb3VuZChjb3N0LCA4KSwKICAgICAgICB9CgogICAgICAgIHRyeToKICAgICAgICAgICAgd2l0aCBvcGVuKHNlbGYuX2Nvc3RfZmlsZSwgImEiLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmaDoKICAgICAgICAgICAgICAgIGZoLndyaXRlKGpzb24uZHVtcHMoZW50cnkpICsgIlxuIikKICAgICAgICBleGNlcHQgT1NFcnJvciBhcyBleGM6CiAgICAgICAgICAgIGxvZ2dlci5lcnJvcigiRmFpbGVkIHRvIHdyaXRlIGNvc3QgbG9nOiAlcyIsIGV4YykKCiAgICAgICAgcmV0dXJuIGNvc3QKCiAgICAjIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgIyBRdWVyeWluZwogICAgIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiAgICBkZWYgX2xvYWRfZW50cmllcyhzZWxmKSAtPiBsaXN0W2RpY3RdOgogICAgICAgICIiIkxvYWQgYWxsIEpTT05MIGVudHJpZXMgZnJvbSB0aGUgY29zdCBmaWxlLiIiIgogICAgICAgIGVudHJpZXM6IGxpc3RbZGljdF0gPSBbXQogICAgICAgIHRyeToKICAgICAgICAgICAgd2l0aCBvcGVuKHNlbGYuX2Nvc3RfZmlsZSwgInIiLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmaDoKICAgICAgICAgICAgICAgIGZvciBsaW5lIGluIGZoOgogICAgICAgICAgICAgICAgICAgIGxpbmUgPSBsaW5lLnN0cmlwKCkKICAgICAgICAgICAgICAgICAgICBpZiBsaW5lOgogICAgICAgICAgICAgICAgICAgICAgICB0cnk6CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnRyaWVzLmFwcGVuZChqc29uLmxvYWRzKGxpbmUpKQogICAgICAgICAgICAgICAgICAgICAgICBleGNlcHQganNvbi5KU09ORGVjb2RlRXJyb3I6CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZQogICAgICAgIGV4Y2VwdCBGaWxlTm90Rm91bmRFcnJvcjoKICAgICAgICAgICAgcGFzcwogICAgICAgIHJldHVybiBlbnRyaWVzCgogICAgZGVmIGdldF9kYWlseV90b3RhbChzZWxmLCB0YXJnZXRfZGF0ZTogZGF0ZSB8IE5vbmUgPSBOb25lKSAtPiBmbG9hdDoKICAgICAgICAiIiJTdW0gY29zdHMgZm9yIGEgZ2l2ZW4gZGF0ZSAoZGVmYXVsdHMgdG8gdG9kYXkpLiIiIgogICAgICAgIHRhcmdldCA9ICh0YXJnZXRfZGF0ZSBvciBkYXRlLnRvZGF5KCkpLmlzb2Zvcm1hdCgpCiAgICAgICAgcmV0dXJuIHN1bSgKICAgICAgICAgICAgZS5nZXQoImNvc3RfdXNkIiwgMC4wKQogICAgICAgICAgICBmb3IgZSBpbiBzZWxmLl9sb2FkX2VudHJpZXMoKQogICAgICAgICAgICBpZiBlLmdldCgiZGF0ZSIpID09IHRhcmdldAogICAgICAgICkKCiAgICBkZWYgZ2V0X21vbnRobHlfdG90YWwoc2VsZiwgeWVhcjogaW50IHwgTm9uZSA9IE5vbmUsIG1vbnRoOiBpbnQgfCBOb25lID0gTm9uZSkgLT4gZmxvYXQ6CiAgICAgICAgIiIiU3VtIGNvc3RzIGZvciBhIGdpdmVuIG1vbnRoIChkZWZhdWx0cyB0byBjdXJyZW50IG1vbnRoKS4iIiIKICAgICAgICBub3cgPSBkYXRlLnRvZGF5KCkKICAgICAgICB5ID0geWVhciBvciBub3cueWVhcgogICAgICAgIG0gPSBtb250aCBvciBub3cubW9udGgKICAgICAgICBwcmVmaXggPSBmInt5OjA0ZH0te206MDJkfSIKICAgICAgICByZXR1cm4gc3VtKAogICAgICAgICAgICBlLmdldCgiY29zdF91c2QiLCAwLjApCiAgICAgICAgICAgIGZvciBlIGluIHNlbGYuX2xvYWRfZW50cmllcygpCiAgICAgICAgICAgIGlmIGUuZ2V0KCJkYXRlIiwgIiIpLnN0YXJ0c3dpdGgocHJlZml4KQogICAgICAgICkKCiAgICBkZWYgaXNfb3Zlcl9idWRnZXQoc2VsZikgLT4gYm9vbDoKICAgICAgICAiIiJSZXR1cm4gVHJ1ZSBpZiBkYWlseSBPUiBtb250aGx5IHNwZW5kaW5nIGV4Y2VlZHMgdGhlIGNvbmZpZ3VyZWQgbGltaXRzLiIiIgogICAgICAgIGRhaWx5ID0gc2VsZi5nZXRfZGFpbHlfdG90YWwoKQogICAgICAgIG1vbnRobHkgPSBzZWxmLmdldF9tb250aGx5X3RvdGFsKCkKICAgICAgICByZXR1cm4gKAogICAgICAgICAgICBkYWlseSA+IGNvbmZpZy5EQUlMWV9CVURHRVRfTElNSVQKICAgICAgICAgICAgb3IgbW9udGhseSA+IGNvbmZpZy5NT05USExZX0JVREdFVF9MSU1JVAogICAgICAgICkKCiAgICBkZWYgZ2V0X3N1bW1hcnkoc2VsZikgLT4gc3RyOgogICAgICAgICIiIlJldHVybiBhIGh1bWFuLXJlYWRhYmxlIHNwZW5kaW5nIHN1bW1hcnkuIiIiCiAgICAgICAgZGFpbHkgPSBzZWxmLmdldF9kYWlseV90b3RhbCgpCiAgICAgICAgbW9udGhseSA9IHNlbGYuZ2V0X21vbnRobHlfdG90YWwoKQogICAgICAgIHN0YXR1cyA9ICJPVkVSIEJVREdFVCIgaWYgc2VsZi5pc19vdmVyX2J1ZGdldCgpIGVsc2UgIndpdGhpbiBidWRnZXQiCiAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgZiJCdWRnZXQgU3VtbWFyeSAoe3N0YXR1c30pXG4iCiAgICAgICAgICAgIGYiICBUb2RheTogICAke2RhaWx5OiwuNGZ9IC8gJHtjb25maWcuREFJTFlfQlVER0VUX0xJTUlUOiwuMmZ9IGRhaWx5IGxpbWl0XG4iCiAgICAgICAgICAgIGYiICBNb250aDogICAke21vbnRobHk6LC40Zn0gLyAke2NvbmZpZy5NT05USExZX0JVREdFVF9MSU1JVDosLjJmfSBtb250aGx5IGxpbWl0IgogICAgICAgICkKCiAgICAjIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgIyBVdGlsaXRpZXMKICAgICMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCgogICAgZGVmIGdldF9icmVha2Rvd24oc2VsZiwgdGFyZ2V0X2RhdGU6IGRhdGUgfCBOb25lID0gTm9uZSkgLT4gZGljdFtzdHIsIGZsb2F0XToKICAgICAgICAiIiJSZXR1cm4gY29zdCBicmVha2Rvd24gYnkgbW9kZWwgZm9yIGEgZ2l2ZW4gZGF0ZS4iIiIKICAgICAgICB0YXJnZXQgPSAodGFyZ2V0X2RhdGUgb3IgZGF0ZS50b2RheSgpKS5pc29mb3JtYXQoKQogICAgICAgIGJyZWFrZG93bjogZGljdFtzdHIsIGZsb2F0XSA9IHt9CiAgICAgICAgZm9yIGUgaW4gc2VsZi5fbG9hZF9lbnRyaWVzKCk6CiAgICAgICAgICAgIGlmIGUuZ2V0KCJkYXRlIikgPT0gdGFyZ2V0OgogICAgICAgICAgICAgICAgbW9kZWwgPSBlLmdldCgibW9kZWwiLCAidW5rbm93biIpCiAgICAgICAgICAgICAgICBicmVha2Rvd25bbW9kZWxdID0gYnJlYWtkb3duLmdldChtb2RlbCwgMC4wKSArIGUuZ2V0KCJjb3N0X3VzZCIsIDAuMCkKICAgICAgICByZXR1cm4gYnJlYWtkb3duCgogICAgZGVmIHJlc2V0KHNlbGYpIC0+IE5vbmU6CiAgICAgICAgIiIiQ2xlYXIgdGhlIGNvc3QgbG9nLiBVc2Ugd2l0aCBjYXV0aW9uLiIiIgogICAgICAgIHdpdGggb3BlbihzZWxmLl9jb3N0X2ZpbGUsICJ3IiwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZmg6CiAgICAgICAgICAgIGZoLnRydW5jYXRlKDApCiAgICAgICAgbG9nZ2VyLmluZm8oIkNvc3QgbG9nIGNsZWFyZWQ6ICVzIiwgc2VsZi5fY29zdF9maWxlKQo=
+"""
+Budget tracker for AI API spending.
+
+Logs every API call to a ``costs.jsonl`` file and provides helpers to
+query daily / monthly totals and enforce spending limits.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+from datetime import datetime, date
+from pathlib import Path
+from typing import Optional
+
+from agent import config
+
+logger = logging.getLogger(__name__)
+
+# Default cost log lives in the project root
+_DEFAULT_COST_FILE = Path(__file__).resolve().parent.parent / "costs.jsonl"
+
+
+class BudgetTracker:
+    """Track API spending and enforce budget limits."""
+
+    def __init__(self, cost_file: str | Path | None = None):
+        self._cost_file = Path(cost_file) if cost_file else _DEFAULT_COST_FILE
+        # Ensure the file exists
+        self._cost_file.touch(exist_ok=True)
+
+    # ------------------------------------------------------------------
+    # Logging
+    # ------------------------------------------------------------------
+
+    def log_call(
+        self,
+        model: str,
+        provider: str,
+        input_tokens: int,
+        output_tokens: int,
+    ) -> float:
+        """
+        Calculate cost for an API call and append it to the cost log.
+
+        Returns the cost in USD for this single call.
+        """
+        pricing = config.COST_PER_1K_TOKENS.get(
+            model, {"input": 0.0, "output": 0.0}
+        )
+        cost = (
+            input_tokens * pricing["input"] + output_tokens * pricing["output"]
+        ) / 1000.0
+
+        entry = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "date": date.today().isoformat(),
+            "model": model,
+            "provider": provider,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cost_usd": round(cost, 8),
+        }
+
+        try:
+            with open(self._cost_file, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(entry) + "\n")
+        except OSError as exc:
+            logger.error("Failed to write cost log: %s", exc)
+
+        return cost
+
+    # ------------------------------------------------------------------
+    # Querying
+    # ------------------------------------------------------------------
+
+    def _load_entries(self) -> list[dict]:
+        """Load all JSONL entries from the cost file."""
+        entries: list[dict] = []
+        try:
+            with open(self._cost_file, "r", encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if line:
+                        try:
+                            entries.append(json.loads(line))
+                        except json.JSONDecodeError:
+                            continue
+        except FileNotFoundError:
+            pass
+        return entries
+
+    def get_daily_total(self, target_date: date | None = None) -> float:
+        """Sum costs for a given date (defaults to today)."""
+        target = (target_date or date.today()).isoformat()
+        return sum(
+            e.get("cost_usd", 0.0)
+            for e in self._load_entries()
+            if e.get("date") == target
+        )
+
+    def get_monthly_total(self, year: int | None = None, month: int | None = None) -> float:
+        """Sum costs for a given month (defaults to current month)."""
+        now = date.today()
+        y = year or now.year
+        m = month or now.month
+        prefix = f"{y:04d}-{m:02d}"
+        return sum(
+            e.get("cost_usd", 0.0)
+            for e in self._load_entries()
+            if e.get("date", "").startswith(prefix)
+        )
+
+    def is_over_budget(self) -> bool:
+        """Return True if daily OR monthly spending exceeds the configured limits."""
+        daily = self.get_daily_total()
+        monthly = self.get_monthly_total()
+        return (
+            daily > config.DAILY_BUDGET_LIMIT
+            or monthly > config.MONTHLY_BUDGET_LIMIT
+        )
+
+    def get_summary(self) -> str:
+        """Return a human-readable spending summary."""
+        daily = self.get_daily_total()
+        monthly = self.get_monthly_total()
+        status = "OVER BUDGET" if self.is_over_budget() else "within budget"
+        return (
+            f"Budget Summary ({status})\n"
+            f"  Today:   ${daily:,.4f} / ${config.DAILY_BUDGET_LIMIT:,.2f} daily limit\n"
+            f"  Month:   ${monthly:,.4f} / ${config.MONTHLY_BUDGET_LIMIT:,.2f} monthly limit"
+        )
+
+    # ------------------------------------------------------------------
+    # Utilities
+    # ------------------------------------------------------------------
+
+    def get_breakdown(self, target_date: date | None = None) -> dict[str, float]:
+        """Return cost breakdown by model for a given date."""
+        target = (target_date or date.today()).isoformat()
+        breakdown: dict[str, float] = {}
+        for e in self._load_entries():
+            if e.get("date") == target:
+                model = e.get("model", "unknown")
+                breakdown[model] = breakdown.get(model, 0.0) + e.get("cost_usd", 0.0)
+        return breakdown
+
+    def reset(self) -> None:
+        """Clear the cost log. Use with caution."""
+        with open(self._cost_file, "w", encoding="utf-8") as fh:
+            fh.truncate(0)
+        logger.info("Cost log cleared: %s", self._cost_file)
