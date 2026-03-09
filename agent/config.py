@@ -1,1 +1,92 @@
-IiIiCkFnZW50IGNvbmZpZ3VyYXRpb24gbW9kdWxlLgoKTG9hZHMgZW52aXJvbm1lbnQgdmFyaWFibGVzLCBkZWZpbmVzIG1vZGVsIGNvbnN0YW50cywgcHJpY2luZywKYnVkZ2V0IGxpbWl0cywgYW5kIHRoZSBkZWZhdWx0IHN5c3RlbSBwcm9tcHQuCiIiIgoKaW1wb3J0IG9zCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApmcm9tIGRvdGVudiBpbXBvcnQgbG9hZF9kb3RlbnYKCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgTG9hZCAuZW52IGZyb20gcHJvamVjdCByb290ICh0d28gbGV2ZWxzIHVwIGZyb20gdGhpcyBmaWxlLCBvciBjd2QpCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9wcm9qZWN0X3Jvb3QgPSBQYXRoKF9fZmlsZV9fKS5yZXNvbHZlKCkucGFyZW50LnBhcmVudApfZW52X3BhdGggPSBfcHJvamVjdF9yb290IC8gIi5lbnYiCmlmIF9lbnZfcGF0aC5leGlzdHMoKToKICAgIGxvYWRfZG90ZW52KF9lbnZfcGF0aCkKZWxzZToKICAgIGxvYWRfZG90ZW52KCkgICMgZmFsbCBiYWNrIHRvIGN3ZCAvIHBhcmVudCBzZWFyY2gKCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgQVBJIEtleXMKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KT1BFTkFJX0FQSV9LRVk6IHN0ciA9IG9zLmdldGVudigiT1BFTkFJX0FQSV9LRVkiLCAiIikKR1JPUV9BUElfS0VZOiBzdHIgPSBvcy5nZXRlbnYoIkdST1FfQVBJX0tFWSIsICIiKQpNSVNUUkFMX0FQSV9LRVk6IHN0ciA9IG9zLmdldGVudigiTUlTVFJBTF9BUElfS0VZIiwgIiIpCk9MTEFNQV9CQVNFX1VSTDogc3RyID0gb3MuZ2V0ZW52KCJPTExBTUFfQkFTRV9VUkwiLCAiaHR0cDovL2xvY2FsaG9zdDoxMTQzNCIpCgojIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIE1vZGVsIG5hbWUgY29uc3RhbnRzICAocHJvdmlkZXIgLT4gbGlzdCBvZiBzdXBwb3J0ZWQgbW9kZWwgc3RyaW5ncykKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiMgT3BlbkFJCk9QRU5BSV9HUFQ0TyA9ICJncHQtNG8iCk9QRU5BSV9HUFQ0T19NSU5JID0gImdwdC00by1taW5pIgoKIyBHcm9xICAoaG9zdGVkIG9wZW4tc291cmNlIG1vZGVscykKR1JPUV9MTEFNQV83MEIgPSAibGxhbWEtMy4xLTcwYi12ZXJzYXRpbGUiCkdST1FfTExBTUFfOEIgPSAibGxhbWEtMy4xLThiLWluc3RhbnQiCgojIE1pc3RyYWwKTUlTVFJBTF9MQVJHRSA9ICJtaXN0cmFsLWxhcmdlLWxhdGVzdCIKTUlTVFJBTF9TTUFMTCA9ICJtaXN0cmFsLXNtYWxsLWxhdGVzdCIKTUlTVFJBTF9DT0RFU1RSQUwgPSAiY29kZXN0cmFsLWxhdGVzdCIKCiMgT2xsYW1hICAobG9jYWwgbW9kZWxzKQpPTExBTUFfRE9MUEhJTiA9ICJkb2xwaGluLW1pc3RyYWwiCk9MTEFNQV9MTEFNQSA9ICJsbGFtYTMuMSIKCiMgQ29udmVuaWVuY2UgZ3JvdXBpbmdzCk9QRU5BSV9NT0RFTFMgPSBbT1BFTkFJX0dQVDRPLCBPUEVOQUlfR1BUNE9fTUlOSV0KR1JPUV9NT0RFTFMgPSBbR1JPUV9MTEFNQV83MEIsIEdST1FfTExBTUFfOEJdCk1JU1RSQUxfTU9ERUxTID0gW01JU1RSQUxfTEFSR0UsIE1JU1RSQUxfU01BTEwsIE1JU1RSQUxfQ09ERVNUUkFMXQpPTExBTUFfTU9ERUxTID0gW09MTEFNQV9ET0xQSElOLCBPTExBTUFfTExBTUFdCkFMTF9NT0RFTFMgPSBPUEVOQUlfTU9ERUxTICsgR1JPUV9NT0RFTFMgKyBNSVNUUkFMX01PREVMUyArIE9MTEFNQV9NT0RFTFMKCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgQ29zdCBwZXIgMSAwMDAgdG9rZW5zICAoVVNEKQojIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDT1NUX1BFUl8xS19UT0tFTlM6IGRpY3Rbc3RyLCBkaWN0W3N0ciwgZmxvYXRdXSA9IHsKICAgICMgT3BlbkFJCiAgICBPUEVOQUlfR1BUNE86ICAgICAgIHsiaW5wdXQiOiAwLjAwMjUsICAib3V0cHV0IjogMC4wMX0sCiAgICBPUEVOQUlfR1BUNE9fTUlOSTogIHsiaW5wdXQiOiAwLjAwMDE1LCAib3V0cHV0IjogMC4wMDA2fSwKICAgICMgR3JvcQogICAgR1JPUV9MTEFNQV83MEI6ICAgICB7ImlucHV0IjogMC4wMDA1OSwgIm91dHB1dCI6IDAuMDAwNzl9LAogICAgR1JPUV9MTEFNQV84QjogICAgICB7ImlucHV0IjogMC4wMDAwNSwgIm91dHB1dCI6IDAuMDAwMDh9LAogICAgIyBNaXN0cmFsCiAgICBNSVNUUkFMX0xBUkdFOiAgICAgIHsiaW5wdXQiOiAwLjAwMiwgICAib3V0cHV0IjogMC4wMDZ9LAogICAgTUlTVFJBTF9TTUFMTDogICAgICB7ImlucHV0IjogMC4wMDAyLCAgIm91dHB1dCI6IDAuMDAwNn0sCiAgICBNSVNUUkFMX0NPREVTVFJBTDogIHsiaW5wdXQiOiAwLjAwMDMsICAib3V0cHV0IjogMC4wMDA5fSwKICAgICMgT2xsYW1hIChmcmVlIC8gbG9jYWwpCiAgICBPTExBTUFfRE9MUEhJTjogICAgIHsiaW5wdXQiOiAwLjAsICAgICAib3V0cHV0IjogMC4wfSwKICAgIE9MTEFNQV9MTEFNQTogICAgICAgeyJpbnB1dCI6IDAuMCwgICAgICJvdXRwdXQiOiAwLjB9LAp9CgojIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIEJ1ZGdldCBsaW1pdHMKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KREFJTFlfQlVER0VUX0xJTUlUOiBmbG9hdCA9IGZsb2F0KG9zLmdldGVudigiREFJTFlfQlVER0VUX0xJTUlUIiwgIjIuMDAiKSkKTU9OVEhMWV9CVURHRVRfTElNSVQ6IGZsb2F0ID0gZmxvYXQob3MuZ2V0ZW52KCJNT05USExZX0JVREdFVF9MSU1JVCIsICIzMC4wMCIpKQoKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBEZWZhdWx0IHN5c3RlbSBwcm9tcHQKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KREVGQVVMVF9TWVNURU1fUFJPTVBUOiBzdHIgPSAoCiAgICAiWW91IGFyZSBhIGhlbHBmdWwgQUkgYXNzaXN0YW50LiBCZSBjb25jaXNlIGFuZCBkaXJlY3QgaW4geW91ciByZXNwb25zZXMuICIKICAgICJVc2UgdG9vbHMgd2hlbiB0aGV5IHdvdWxkIHByb3ZpZGUgYmV0dGVyIGFuc3dlcnMgdGhhbiB5b3VyIHRyYWluaW5nIGRhdGEgYWxvbmUuICIKICAgICJJZiB5b3UgYXJlIHVuc3VyZSBhYm91dCBzb21ldGhpbmcsIHNheSBzbyByYXRoZXIgdGhhbiBndWVzc2luZy4gIgogICAgIldoZW4gcHJlc2VudGluZyBpbmZvcm1hdGlvbiwgc3RydWN0dXJlIGl0IGNsZWFybHkgd2l0aCBidWxsZXQgcG9pbnRzIG9yICIKICAgICJudW1iZXJlZCBsaXN0cyB3aGVuIGFwcHJvcHJpYXRlLiIKKQo=
+"""
+Agent configuration module.
+
+Loads environment variables, defines model constants, pricing,
+budget limits, and the default system prompt.
+"""
+
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# ---------------------------------------------------------------------------
+# Load .env from project root (two levels up from this file, or cwd)
+# ---------------------------------------------------------------------------
+_project_root = Path(__file__).resolve().parent.parent
+_env_path = _project_root / ".env"
+if _env_path.exists():
+    load_dotenv(_env_path)
+else:
+    load_dotenv()  # fall back to cwd / parent search
+
+# ---------------------------------------------------------------------------
+# API Keys
+# ---------------------------------------------------------------------------
+OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+MISTRAL_API_KEY: str = os.getenv("MISTRAL_API_KEY", "")
+OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
+# ---------------------------------------------------------------------------
+# Model name constants  (provider -> list of supported model strings)
+# ---------------------------------------------------------------------------
+
+# OpenAI
+OPENAI_GPT4O = "gpt-4o"
+OPENAI_GPT4O_MINI = "gpt-4o-mini"
+
+# Groq  (hosted open-source models)
+GROQ_LLAMA_70B = "llama-3.1-70b-versatile"
+GROQ_LLAMA_8B = "llama-3.1-8b-instant"
+
+# Mistral
+MISTRAL_LARGE = "mistral-large-latest"
+MISTRAL_SMALL = "mistral-small-latest"
+MISTRAL_CODESTRAL = "codestral-latest"
+
+# Ollama  (local models)
+OLLAMA_DOLPHIN = "dolphin-mistral"
+OLLAMA_LLAMA = "llama3.1"
+
+# Convenience groupings
+OPENAI_MODELS = [OPENAI_GPT4O, OPENAI_GPT4O_MINI]
+GROQ_MODELS = [GROQ_LLAMA_70B, GROQ_LLAMA_8B]
+MISTRAL_MODELS = [MISTRAL_LARGE, MISTRAL_SMALL, MISTRAL_CODESTRAL]
+OLLAMA_MODELS = [OLLAMA_DOLPHIN, OLLAMA_LLAMA]
+ALL_MODELS = OPENAI_MODELS + GROQ_MODELS + MISTRAL_MODELS + OLLAMA_MODELS
+
+# ---------------------------------------------------------------------------
+# Cost per 1 000 tokens  (USD)
+# ---------------------------------------------------------------------------
+COST_PER_1K_TOKENS: dict[str, dict[str, float]] = {
+    # OpenAI
+    OPENAI_GPT4O:       {"input": 0.0025,  "output": 0.01},
+    OPENAI_GPT4O_MINI:  {"input": 0.00015, "output": 0.0006},
+    # Groq
+    GROQ_LLAMA_70B:     {"input": 0.00059, "output": 0.00079},
+    GROQ_LLAMA_8B:      {"input": 0.00005, "output": 0.00008},
+    # Mistral
+    MISTRAL_LARGE:      {"input": 0.002,   "output": 0.006},
+    MISTRAL_SMALL:      {"input": 0.0002,  "output": 0.0006},
+    MISTRAL_CODESTRAL:  {"input": 0.0003,  "output": 0.0009},
+    # Ollama (free / local)
+    OLLAMA_DOLPHIN:     {"input": 0.0,     "output": 0.0},
+    OLLAMA_LLAMA:       {"input": 0.0,     "output": 0.0},
+}
+
+# ---------------------------------------------------------------------------
+# Budget limits
+# ---------------------------------------------------------------------------
+DAILY_BUDGET_LIMIT: float = float(os.getenv("DAILY_BUDGET_LIMIT", "2.00"))
+MONTHLY_BUDGET_LIMIT: float = float(os.getenv("MONTHLY_BUDGET_LIMIT", "30.00"))
+
+# ---------------------------------------------------------------------------
+# Default system prompt
+# ---------------------------------------------------------------------------
+DEFAULT_SYSTEM_PROMPT: str = (
+    "You are a helpful AI assistant. Be concise and direct in your responses. "
+    "Use tools when they would provide better answers than your training data alone. "
+    "If you are unsure about something, say so rather than guessing. "
+    "When presenting information, structure it clearly with bullet points or "
+    "numbered lists when appropriate."
+)
