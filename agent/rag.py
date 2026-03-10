@@ -282,6 +282,90 @@ class RAGPipeline:
         )
         logger.info("Collection '%s' cleared and recreated.", self.collection_name)
 
+
+    # ------------------------------------------------------------------
+    # Auto-learning: scan a folder and ingest new files automatically
+    # ------------------------------------------------------------------
+
+    INGEST_EXTENSIONS = {
+        ".pdf", ".md", ".txt", ".py", ".js", ".ts",
+        ".json", ".yaml", ".yml", ".html", ".csv", ".rst",
+    }
+
+    def auto_ingest_folder(
+        self,
+        directory: str,
+        memory=None,
+    ) -> dict:
+        """
+        Scan *directory* for new/changed files and ingest them.
+
+        Uses PersistentMemory's ingested_files table to track what's
+        already been processed so we don't re-ingest unchanged files.
+
+        Parameters
+        ----------
+        directory : str
+            Path to the knowledge folder to scan.
+        memory : PersistentMemory, optional
+            If provided, tracks ingested files in SQLite.
+
+        Returns
+        -------
+        dict
+            {"scanned": int, "ingested": int, "skipped": int, "errors": list}
+        """
+        import hashlib
+
+        folder = Path(directory)
+        if not folder.exists():
+            folder.mkdir(parents=True, exist_ok=True)
+            logger.info("Created knowledge folder: %s", folder)
+            return {"scanned": 0, "ingested": 0, "skipped": 0, "errors": []}
+
+        stats = {"scanned": 0, "ingested": 0, "skipped": 0, "errors": []}
+
+        for file_path in sorted(folder.rglob("*")):
+            if not file_path.is_file():
+                continue
+            if file_path.suffix.lower() not in self.INGEST_EXTENSIONS:
+                continue
+
+            stats["scanned"] += 1
+            str_path = str(file_path)
+
+            # Compute file hash for change detection
+            try:
+                file_hash = hashlib.md5(file_path.read_bytes()).hexdigest()
+            except Exception:
+                file_hash = ""
+
+            # Check if already ingested
+            if memory and hasattr(memory, "is_file_ingested"):
+                if memory.is_file_ingested(str_path):
+                    stats["skipped"] += 1
+                    continue
+
+            # Ingest the file
+            try:
+                chunks_added = self.ingest(str_path)
+                stats["ingested"] += 1
+                logger.info(
+                    "Auto-ingested: %s (%d chunks)", file_path.name, chunks_added
+                )
+                if memory and hasattr(memory, "mark_file_ingested"):
+                    memory.mark_file_ingested(str_path, file_hash)
+            except Exception as e:
+                stats["errors"].append(f"{file_path.name}: {e}")
+                logger.warning("Failed to ingest %s: %s", file_path.name, e)
+
+        if stats["ingested"] > 0:
+            logger.info(
+                "Auto-ingest complete: %d new, %d skipped",
+                stats["ingested"], stats["skipped"],
+            )
+
+        return stats
     def __repr__(self) -> str:
         count = 0
         if self._collection is not None:
