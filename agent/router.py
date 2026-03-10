@@ -1,9 +1,13 @@
 """
-Smart Router — intent-based model routing with budget awareness.
+Smart Router v3 -- intent-based model routing with FREE_MODE safety lock.
 
 Classifies user messages by intent (code, creative, reasoning, uncensored,
-chat) and selects the optimal provider/model pair.  Falls back gracefully
-when a provider is unavailable or the spending budget is exhausted.
+chat) and selects the optimal provider/model pair from the ranked
+preference lists in config.INTENT_ROUTES.
+
+When FREE_MODE=true (default), the router will NEVER route to a paid
+provider -- guaranteed $0 spend. When FREE_MODE=false, paid providers
+are allowed but still subject to daily/monthly budget caps.
 """
 
 from __future__ import annotations
@@ -13,25 +17,31 @@ from typing import Dict, List, Tuple, Any, Optional
 
 from agent import config
 from agent.providers import BaseProvider
+from agent.providers.universal_provider import UniversalProvider
 from agent.budget import BudgetTracker
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Intent keyword map — order matters: first match wins
+# Intent keyword map -- order matters: first match wins
 # ---------------------------------------------------------------------------
 _INTENT_KEYWORDS: Dict[str, List[str]] = {
     "creative": [
         "story", "poem", "creative", "imagine", "fiction",
-        "blog", "essay", "compose",
+        "blog", "essay", "compose", "write me",
     ],
     "code": [
         "code", "function", "debug", "python", "javascript", "program",
         "script", "implement", "class", "algorithm", "fix this", "write a",
+        "refactor", "optimize", "compile", "syntax", "error", "bug",
+        "api", "endpoint", "database", "sql", "html", "css", "react",
+        "node", "typescript", "rust", "golang", "java", "c++",
     ],
     "reasoning": [
         "analyze", "compare", "reason", "think step by step",
         "pros and cons", "explain why", "evaluate", "assess",
+        "break down", "logic", "proof", "derive", "calculate",
+        "math", "solve", "figure out",
     ],
     "uncensored": [
         "uncensored", "no filter", "unfiltered", "no restrictions",
@@ -39,22 +49,66 @@ _INTENT_KEYWORDS: Dict[str, List[str]] = {
     ],
 }
 
-# Intent -> (provider_key, model_constant)
-_INTENT_ROUTES: Dict[str, Tuple[str, str]] = {
-    "code":        ("mistral",  config.MISTRAL_CODESTRAL),
-    "creative":    ("openai",   config.OPENAI_GPT4O),
-    "reasoning":   ("openai",   config.OPENAI_GPT4O),
-    "uncensored":  ("ollama",   config.OLLAMA_DOLPHIN),
-    "chat":        ("groq",     config.GROQ_LLAMA_8B),
-}
 
-# Fallback order when the preferred provider is unavailable
-_FALLBACK_ORDER: List[Tuple[str, str]] = [
-    ("groq",    config.GROQ_LLAMA_8B),
-    ("mistral", config.MISTRAL_SMALL),
-    ("openai",  config.OPENAI_GPT4O_MINI),
-    ("ollama",  config.OLLAMA_LLAMA),
-]
+def _is_free_provider(prov_name: str) -> bool:
+    """Check if a provider is in the free tier set."""
+    return prov_name in config.FREE_PROVIDERS
+
+
+def _model_has_cost(model: str) -> bool:
+    """Check if a model has any non-zero cost."""
+    cost = config.COST_PER_1K_TOKENS.get(model, {})
+    return cost.get("input", 0) > 0 or cost.get("output", 0) > 0
+
+
+def build_providers() -> Dict[str, UniversalProvider]:
+    """
+    Build all providers from config.PROVIDER_REGISTRY.
+
+    Each entry in the registry becomes a UniversalProvider instance.
+    Only providers with valid API keys (or local flag) are included.
+    """
+    providers: Dict[str, UniversalProvider] = {}
+
+    for name, info in config.PROVIDER_REGISTRY.items():
+        try:
+            prov = UniversalProvider(
+                name=name,
+                api_key=info["api_key"],
+                base_url=info["base_url"],
+                default_model=info["default_model"],
+                supports_tools=info.get("supports_tools", True),
+                is_local=info.get("local", False),
+            )
+            providers[name] = prov
+
+            status = "FREE" if info.get("free_tier") else "PAID"
+            logger.info(
+                "Registered provider: %s [%s] (available=%s)",
+                name, status, prov.is_available(),
+            )
+        except Exception as e:
+            logger.warning("Could not init provider %s: %s", name, e)
+
+    if config.FREE_MODE:
+        free_count = sum(
+            1 for n, p in providers.items()
+            if _is_free_provider(n) and p.is_available()
+        )
+        logger.info(
+            "FREE_MODE=ON -- %d free providers available. "
+            "Paid providers are registered but BLOCKED from routing.",
+            free_count,
+        )
+    else:
+        logger.warning(
+            "FREE_MODE=OFF -- paid providers are UNLOCKED. "
+            "Budget caps: $%.2f/day, $%.2f/month",
+            config.DAILY_BUDGET_LIMIT,
+            config.MONTHLY_BUDGET_LIMIT,
+        )
+
+    return providers
 
 
 class Router:
@@ -65,15 +119,6 @@ class Router:
         providers: Dict[str, BaseProvider],
         budget: BudgetTracker,
     ):
-        """
-        Parameters
-        ----------
-        providers : dict
-            Mapping of provider name ("openai", "groq", ...) to a
-            concrete :class:`BaseProvider` instance.
-        budget : BudgetTracker
-            Used to check spending limits before routing to paid APIs.
-        """
         self.providers = providers
         self.budget = budget
 
@@ -81,39 +126,42 @@ class Router:
     # Intent classification
     # ------------------------------------------------------------------
 
-    def classify_intent(self, message: str) -> Dict[str, str]:
+    def classify_intent(self, message: str) -> str:
         """
         Classify a user message into an intent category.
-
-        Scans the lowered message for keyword matches.  The first
-        intent category whose keyword appears wins.  When nothing
-        matches the default is ``"chat"``.
-
-        Returns
-        -------
-        dict
-            ``{"intent": str, "provider": str, "model": str}``
+        Scans the lowered message for keyword matches. First match wins.
+        Default is "chat".
         """
         msg_lower = message.lower()
-
-        # Walk the keyword map; first matching intent wins
         for intent, keywords in _INTENT_KEYWORDS.items():
             for kw in keywords:
                 if kw in msg_lower:
-                    provider_key, model = _INTENT_ROUTES[intent]
-                    logger.debug(
-                        "Intent '%s' matched keyword '%s' -> %s/%s",
-                        intent, kw, provider_key, model,
-                    )
-                    return {
-                        "intent": intent,
-                        "provider": provider_key,
-                        "model": model,
-                    }
+                    logger.debug("Intent '%s' matched keyword '%s'", intent, kw)
+                    return intent
+        return "chat"
 
-        # Default fallback: chat
-        provider_key, model = _INTENT_ROUTES["chat"]
-        return {"intent": "chat", "provider": provider_key, "model": model}
+    # ------------------------------------------------------------------
+    # Provider eligibility check
+    # ------------------------------------------------------------------
+
+    def _is_eligible(self, prov_name: str, model: str, over_budget: bool) -> bool:
+        """
+        Check if a provider/model pair is eligible for routing.
+
+        Rules (in order):
+        1. FREE_MODE=true  -> BLOCK all paid providers, period.
+        2. Over budget     -> BLOCK any model with cost > 0.
+        3. Otherwise       -> Allow.
+        """
+        # Rule 1: FREE_MODE hard lock
+        if config.FREE_MODE and not _is_free_provider(prov_name):
+            return False
+
+        # Rule 2: Budget exceeded -- only allow genuinely free models
+        if over_budget and _model_has_cost(model):
+            return False
+
+        return True
 
     # ------------------------------------------------------------------
     # Main routing
@@ -124,78 +172,82 @@ class Router:
         message: str,
     ) -> Tuple[BaseProvider, str, Dict[str, Any]]:
         """
-        Select the best provider and model for *message*.
+        Select the best provider and model for a message.
 
         Logic:
-        1. Classify the intent via keyword matching.
-        2. If the budget is exceeded, override to ollama/llama3.1 (free).
-        3. Check that the chosen provider is available.
-        4. If not, walk the fallback chain: groq -> mistral -> openai -> ollama.
+        1. Classify intent via keyword matching.
+        2. Walk the ranked preference list for that intent.
+        3. Skip ineligible providers (FREE_MODE / budget checks).
+        4. First available + eligible provider wins.
+        5. If all intent providers fail, walk the global fallback chain.
 
-        Returns
-        -------
-        tuple
-            ``(provider_instance, model_name, route_info_dict)``
-
-        Raises
-        ------
-        RuntimeError
-            If no provider is available at all.
+        Returns (provider_instance, model_name, route_info_dict)
         """
-        route_info = self.classify_intent(message)
-        intent = route_info["intent"]
-        provider_key = route_info["provider"]
-        model = route_info["model"]
+        intent = self.classify_intent(message)
+        over_budget = self.budget.is_over_budget()
 
-        # ---- Budget guard: force free local model when over budget ----
-        if self.budget.is_over_budget():
-            logger.warning(
-                "Budget exceeded — forcing ollama/%s for intent '%s'",
-                config.OLLAMA_LLAMA, intent,
-            )
-            provider_key = "ollama"
-            model = config.OLLAMA_LLAMA
-            route_info.update(
-                provider=provider_key,
-                model=model,
-                budget_override=True,
-            )
+        route_info: Dict[str, Any] = {
+            "intent": intent,
+            "provider": None,
+            "model": None,
+            "fallback": False,
+            "budget_override": over_budget,
+            "free_mode": config.FREE_MODE,
+        }
 
-        # ---- Availability check with fallback chain -----------------
-        provider = self.providers.get(provider_key)
+        # Get the ranked provider list for this intent
+        intent_chain = config.INTENT_ROUTES.get(intent, config.INTENT_ROUTES["chat"])
 
-        if provider and provider.is_available():
-            route_info["fallback"] = False
-            logger.info(
-                "Routed: intent=%s -> %s/%s", intent, provider_key, model,
-            )
-            return provider, model, route_info
+        # Walk the intent-specific chain
+        for prov_name, model in intent_chain:
+            if not self._is_eligible(prov_name, model, over_budget):
+                continue
 
-        # Preferred provider not available — walk the fallback list
-        logger.warning(
-            "Provider '%s' unavailable, searching fallbacks...", provider_key,
-        )
-        for fb_key, fb_model in _FALLBACK_ORDER:
-            if fb_key == provider_key:
-                continue  # already tried
-            fb_provider = self.providers.get(fb_key)
-            if fb_provider and fb_provider.is_available():
+            provider = self.providers.get(prov_name)
+            if provider and provider.is_available():
+                route_info["provider"] = prov_name
+                route_info["model"] = model
                 logger.info(
-                    "Fallback: %s/%s -> %s/%s",
-                    provider_key, model, fb_key, fb_model,
+                    "Routed: intent=%s -> %s/%s%s",
+                    intent, prov_name, model,
+                    " [FREE]" if _is_free_provider(prov_name) else " [PAID]",
                 )
-                route_info.update(
-                    provider=fb_key,
-                    model=fb_model,
-                    fallback=True,
-                    original_provider=provider_key,
-                    original_model=model,
-                )
-                return fb_provider, fb_model, route_info
+                return provider, model, route_info
 
-        raise RuntimeError(
-            "No providers are available. Check API keys and Ollama status."
+        # Intent chain exhausted -- walk global fallback
+        logger.warning(
+            "All intent-specific providers unavailable for '%s', trying fallbacks...",
+            intent,
         )
+
+        for prov_name, model in config.FALLBACK_CHAIN:
+            if not self._is_eligible(prov_name, model, over_budget):
+                continue
+
+            provider = self.providers.get(prov_name)
+            if provider and provider.is_available():
+                route_info["provider"] = prov_name
+                route_info["model"] = model
+                route_info["fallback"] = True
+                logger.info(
+                    "Fallback routed: %s/%s for intent '%s'%s",
+                    prov_name, model, intent,
+                    " [FREE]" if _is_free_provider(prov_name) else " [PAID]",
+                )
+                return provider, model, route_info
+
+        # Nothing available at all
+        if config.FREE_MODE:
+            raise RuntimeError(
+                "No FREE providers are available. Check API keys for: "
+                + ", ".join(sorted(config.FREE_PROVIDERS))
+                + "\nOr set FREE_MODE=false in .env to unlock paid providers."
+            )
+        else:
+            raise RuntimeError(
+                "No providers are available. Check API keys in .env "
+                "and/or run 'ollama serve' for local models."
+            )
 
     # ------------------------------------------------------------------
     # Utilities
@@ -209,6 +261,39 @@ class Router:
             if prov.is_available()
         ]
 
+    def get_free_providers(self) -> List[str]:
+        """Return names of available FREE providers only."""
+        return [
+            name
+            for name, prov in self.providers.items()
+            if prov.is_available() and _is_free_provider(name)
+        ]
+
+    def get_paid_providers(self) -> List[str]:
+        """Return names of available PAID providers only."""
+        return [
+            name
+            for name, prov in self.providers.items()
+            if prov.is_available() and not _is_free_provider(name)
+        ]
+
+    def get_provider_status(self) -> Dict[str, Dict[str, Any]]:
+        """Return all providers with availability and free/paid status."""
+        return {
+            name: {
+                "available": prov.is_available(),
+                "free": _is_free_provider(name),
+                "blocked": config.FREE_MODE and not _is_free_provider(name),
+                "limits": config.PROVIDER_REGISTRY.get(name, {}).get("limits", ""),
+            }
+            for name, prov in self.providers.items()
+        }
+
     def __repr__(self) -> str:
-        avail = self.get_available_providers()
-        return f"Router(providers={list(self.providers.keys())}, available={avail})"
+        free = self.get_free_providers()
+        paid = self.get_paid_providers()
+        mode = "FREE_MODE" if config.FREE_MODE else "FULL_MODE"
+        return (
+            f"Router({mode}: {len(free)} free, {len(paid)} paid providers | "
+            f"free=[{', '.join(free)}])"
+        )
