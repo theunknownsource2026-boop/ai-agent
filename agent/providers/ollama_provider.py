@@ -31,7 +31,7 @@ class OllamaProvider(BaseProvider):
         timeout: float = 120.0,
     ):
         self._base_url = (base_url or config.OLLAMA_BASE_URL).rstrip("/")
-        self._default_model = default_model or config.OLLAMA_LLAMA
+        self._default_model = default_model or config.OLLAMA_MODEL
         self._timeout = timeout
 
     # ------------------------------------------------------------------
@@ -72,6 +72,7 @@ class OllamaProvider(BaseProvider):
             func = tc.get("function", {})
             parsed.append({
                 "id": f"ollama_call_{idx}",
+                "type": "function",
                 "function": {
                     "name": func.get("name", ""),
                     "arguments": json.dumps(func.get("arguments", {})),
