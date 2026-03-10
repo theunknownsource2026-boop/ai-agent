@@ -33,18 +33,20 @@ UNCENSORED_SYSTEM_PROMPT = (
 
 # Provider color badges for the UI
 PROVIDER_COLORS = {
-    "openai": "green",
+    # Free providers
     "groq": "cyan",
-    "mistral": "magenta",
-    "ollama": "yellow",
     "gemini": "blue",
-    "deepseek": "red",
-    "openrouter": "bright_green",
     "cerebras": "bright_cyan",
-    "github": "white",
-    "sambanova": "bright_magenta",
-    "nvidia": "bright_green",
+    "openrouter": "bright_green",
+    "ollama": "yellow",
+    "mistral": "magenta",
     "cohere": "bright_yellow",
+    # Credit-based / paid providers
+    "deepseek": "red",
+    "xai": "white",
+    "anthropic": "bright_magenta",
+    "openai": "green",
+    "together": "bright_red",
 }
 
 
@@ -129,6 +131,10 @@ class Agent:
 - `/threads` -- List conversation threads
 - `/thread new [name]` -- Start a new conversation thread
 - `/thread switch <id>` -- Switch to a different thread
+- `/thread rename <name>` -- Rename current thread
+- `/thread delete <id>` -- Delete a thread
+- `/summary` -- Manually summarize current conversation
+- `/forget <query>` -- Delete matching facts from memory
 - `/memory` -- Show memory system statistics
 - `/uncensored` -- Toggle uncensored mode (routes to Ollama)
 - `/clear` -- Clear conversation history
@@ -227,11 +233,17 @@ class Agent:
 
         elif cmd == "/providers":
             status_map = self.router.get_provider_status()
-            available = sum(1 for v in status_map.values() if v)
+            available = sum(1 for v in status_map.values() if v["available"])
             console.print(f"[bold]Providers: {available}/{len(status_map)} available[/bold]")
-            for name, is_avail in sorted(status_map.items()):
+            for name, info in sorted(status_map.items()):
                 color = PROVIDER_COLORS.get(name, "white")
-                status = f"[{color}]available[/{color}]" if is_avail else "[red]unavailable[/red]"
+                if info["available"]:
+                    tier = "free" if info["free"] else "paid"
+                    status = f"[{color}]available ({tier})[/{color}]"
+                elif info["blocked"]:
+                    status = "[yellow]blocked (free mode)[/yellow]"
+                else:
+                    status = "[red]unavailable[/red]"
                 console.print(f"  {name}: {status}")
             return True
 
@@ -261,7 +273,7 @@ class Agent:
                 tid = self.memory.new_thread(name)
                 console.print(f"[green]New thread created: {tid[:8]}[/green]")
             elif subcmd == "switch" and arg:
-                # Allow partial ID match
+                # Allow partial ID match or name match
                 target = arg.strip()
                 threads = self.memory.list_threads()
                 match = None
@@ -274,8 +286,56 @@ class Agent:
                     console.print(f"[green]Switched to thread {match[:8]}[/green]")
                 else:
                     console.print(f"[red]Thread not found: {target}[/red]")
+            elif subcmd == "rename" and arg:
+                new_name = arg.strip()
+                self.memory.rename_thread(self.memory._current_thread_id, new_name)
+                console.print(f"[green]Thread renamed to: {new_name}[/green]")
+            elif subcmd == "delete" and arg:
+                target = arg.strip()
+                threads = self.memory.list_threads()
+                match = None
+                for t in threads:
+                    if t["id"].startswith(target) or t["name"] == target:
+                        match = t
+                        break
+                if match:
+                    if match["id"] == self.memory._current_thread_id:
+                        console.print("[red]Cannot delete the active thread. Switch first.[/red]")
+                    else:
+                        self.memory.delete_thread(match["id"])
+                        console.print(f"[green]Deleted thread: {match['name']} ({match['id'][:8]})[/green]")
+                else:
+                    console.print(f"[red]Thread not found: {target}[/red]")
             else:
-                console.print("[dim]Usage: /thread new [name] | /thread switch <id>[/dim]")
+                console.print("[dim]Usage: /thread new [name] | /thread switch <id> | /thread rename <name> | /thread delete <id>[/dim]")
+            return True
+
+        elif cmd == "/summary":
+            # Manual summarize: compress current thread's history
+            cache_len = len(self.memory._message_cache)
+            if cache_len < 4:
+                console.print("[dim]Not enough messages to summarize yet.[/dim]")
+            else:
+                self.memory._auto_summarize()
+                new_len = len(self.memory._message_cache)
+                console.print(
+                    f"[green]Summarized {cache_len - new_len} messages into a summary.[/green] "
+                    f"{new_len} messages remain in active context."
+                )
+            return True
+
+        elif cmd.startswith("/forget"):
+            query = user_input[7:].strip()
+            if not query:
+                console.print("[dim]Usage: /forget <query> -- deletes matching facts[/dim]")
+                return True
+            # Find matching facts first
+            matches = self.memory.recall(query=query, limit=10)
+            if not matches:
+                console.print("[dim]No matching facts found.[/dim]")
+            else:
+                deleted = self.memory.forget(query)
+                console.print(f"[green]Deleted {deleted} matching fact(s).[/green]")
             return True
 
         elif cmd == "/memory":
@@ -456,8 +516,8 @@ class Agent:
                     console.print(f"[red]All providers failed: {e2}[/red]")
                     return
 
-            # Log cost
-            self.budget.log_call(
+            # Log cost (returns actual cost from config pricing)
+            call_cost = self.budget.log_call(
                 model=response.model,
                 provider=response.provider,
                 input_tokens=response.input_tokens,
@@ -474,6 +534,7 @@ class Agent:
                     else:
                         ntc = {
                             "id": getattr(tc, "id", ""),
+                            "type": "function",
                             "function": {
                                 "name": tc.function.name if hasattr(tc, "function") else "",
                                 "arguments": tc.function.arguments if hasattr(tc, "function") else "",
@@ -505,12 +566,16 @@ class Agent:
                 # Add to persistent memory (saved to SQLite)
                 self.memory.add_message("assistant", response.content)
 
-                # Show cost
-                cost = (response.input_tokens * 0.0025 + response.output_tokens * 0.01) / 1000
-                if prov_name != "ollama":
+                # Show cost (uses actual pricing from budget tracker)
+                if prov_name != "ollama" and call_cost > 0:
                     console.print(
                         f"[dim]tokens: {response.input_tokens}in/{response.output_tokens}out | "
-                        f"~${cost:.6f}[/dim]"
+                        f"~${call_cost:.6f}[/dim]"
+                    )
+                elif prov_name != "ollama":
+                    console.print(
+                        f"[dim]tokens: {response.input_tokens}in/{response.output_tokens}out | "
+                        f"free[/dim]"
                     )
             break
 
