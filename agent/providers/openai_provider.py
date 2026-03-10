@@ -48,6 +48,7 @@ class OpenAIProvider(BaseProvider):
         for tc in raw_tool_calls:
             parsed.append({
                 "id": tc.id,
+                "type": "function",
                 "function": {
                     "name": tc.function.name,
                     "arguments": tc.function.arguments,
@@ -159,6 +160,7 @@ class OpenAIProvider(BaseProvider):
                     if idx not in tool_call_chunks:
                         tool_call_chunks[idx] = {
                             "id": tc_delta.id or "",
+                            "type": "function",
                             "function": {"name": "", "arguments": ""},
                         }
                     entry = tool_call_chunks[idx]
