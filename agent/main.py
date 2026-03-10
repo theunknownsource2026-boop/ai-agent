@@ -15,15 +15,11 @@ from rich.live import Live
 from rich.spinner import Spinner
 
 from agent import config
-from agent.memory import ConversationMemory
+from agent.memory import PersistentMemory, ConversationMemory
 from agent.budget import BudgetTracker
-from agent.router import Router
+from agent.router import Router, build_providers
 from agent.rag import RAGPipeline
 from agent.tools.builtin import default_registry
-from agent.providers.openai_provider import OpenAIProvider
-from agent.providers.groq_provider import GroqProvider
-from agent.providers.mistral_provider import MistralProvider
-from agent.providers.ollama_provider import OllamaProvider
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -41,6 +37,14 @@ PROVIDER_COLORS = {
     "groq": "cyan",
     "mistral": "magenta",
     "ollama": "yellow",
+    "gemini": "blue",
+    "deepseek": "red",
+    "openrouter": "bright_green",
+    "cerebras": "bright_cyan",
+    "github": "white",
+    "sambanova": "bright_magenta",
+    "nvidia": "bright_green",
+    "cohere": "bright_yellow",
 }
 
 
@@ -48,30 +52,55 @@ class Agent:
     """Main agent that ties everything together."""
 
     def __init__(self, use_embeddings=False):
-        # Initialize components
-        self.memory = ConversationMemory(use_embeddings=use_embeddings)
+        # Initialize persistent memory (SQLite + optional ChromaDB)
+        self.memory = PersistentMemory(use_embeddings=use_embeddings)
         self.memory.set_system(config.DEFAULT_SYSTEM_PROMPT)
         self.budget = BudgetTracker()
         self.tools = default_registry
 
         # Initialize RAG (lazy -- only loads model when first used)
-        self.rag = None  # initialized on first /rag command
+        self.rag = None  # initialized on first /rag command or auto-ingest
 
-        # Initialize providers
-        providers = {}
-        for name, ProvClass in [
-            ("openai", OpenAIProvider),
-            ("groq", GroqProvider),
-            ("mistral", MistralProvider),
-            ("ollama", OllamaProvider),
-        ]:
-            try:
-                providers[name] = ProvClass()
-            except Exception as e:
-                logger.warning("Could not init %s: %s", name, e)
-
+        # Initialize ALL providers from config registry
+        providers = build_providers()
         self.router = Router(providers, self.budget)
         self.uncensored_mode = False
+
+        # Auto-ingest knowledge folder on startup (non-blocking)
+        self._auto_ingest_on_startup()
+
+    def _auto_ingest_on_startup(self):
+        """Scan the knowledge folder and ingest any new/changed files."""
+        knowledge_dir = getattr(config, "KNOWLEDGE_DIR", None)
+        if not knowledge_dir:
+            return
+
+        knowledge_path = Path(knowledge_dir)
+        if not knowledge_path.exists():
+            knowledge_path.mkdir(parents=True, exist_ok=True)
+            console.print(f"[dim]Created knowledge folder: {knowledge_path}[/dim]")
+            return
+
+        # Check if there are any files to ingest
+        has_files = any(
+            f.is_file() for f in knowledge_path.rglob("*")
+            if f.suffix.lower() in RAGPipeline.INGEST_EXTENSIONS
+        )
+        if not has_files:
+            return
+
+        console.print("[dim]Scanning knowledge folder for new documents...[/dim]")
+        rag = self._get_rag()
+        stats = rag.auto_ingest_folder(str(knowledge_path), memory=self.memory)
+
+        if stats["ingested"] > 0:
+            console.print(
+                f"[green]Auto-learned {stats['ingested']} new document(s)[/green] "
+                f"({stats['skipped']} already known)"
+            )
+        if stats["errors"]:
+            for err in stats["errors"]:
+                console.print(f"[red]  Ingest error: {err}[/red]")
 
     def _get_rag(self):
         """Lazy-init RAG pipeline."""
@@ -94,8 +123,13 @@ class Agent:
 - `/rag ingest <filepath>` -- Add a document to RAG
 - `/rag query <question>` -- Search your documents
 - `/rag sources` -- List ingested documents
+- `/autoingest` -- Scan knowledge folder for new docs
 - `/model` -- Show current routing info
 - `/providers` -- List available providers
+- `/threads` -- List conversation threads
+- `/thread new [name]` -- Start a new conversation thread
+- `/thread switch <id>` -- Switch to a different thread
+- `/memory` -- Show memory system statistics
 - `/uncensored` -- Toggle uncensored mode (routes to Ollama)
 - `/clear` -- Clear conversation history
 - `/quit` or `/exit` -- Exit the agent
@@ -110,8 +144,14 @@ class Agent:
         elif cmd.startswith("/remember "):
             fact = user_input[10:].strip()
             if fact:
-                self.memory.remember(fact)
-                console.print(f"[green]Remembered:[/green] {fact}")
+                # Support category: /remember [category] fact
+                category = "general"
+                if fact.startswith("[") and "]" in fact:
+                    cat_end = fact.index("]")
+                    category = fact[1:cat_end].strip()
+                    fact = fact[cat_end + 1:].strip()
+                self.memory.remember(fact, category=category)
+                console.print(f"[green]Remembered:[/green] {fact} [dim]({category})[/dim]")
             return True
 
         elif cmd.startswith("/recall"):
@@ -136,6 +176,8 @@ class Agent:
                 try:
                     n = rag.ingest(arg)
                     console.print(f"[green]Ingested {n} chunks from {arg}[/green]")
+                    # Track in memory
+                    self.memory.mark_file_ingested(arg)
                 except Exception as e:
                     console.print(f"[red]Error: {e}[/red]")
             elif subcmd == "query" and arg:
@@ -160,6 +202,23 @@ class Agent:
                 console.print("[dim]Usage: /rag ingest <path> | /rag query <question> | /rag sources[/dim]")
             return True
 
+        elif cmd == "/autoingest":
+            knowledge_dir = getattr(config, "KNOWLEDGE_DIR", None)
+            if not knowledge_dir:
+                console.print("[dim]No KNOWLEDGE_DIR set in config. Set it to a folder path.[/dim]")
+                return True
+            rag = self._get_rag()
+            stats = rag.auto_ingest_folder(str(knowledge_dir), memory=self.memory)
+            console.print(
+                f"Scanned: {stats['scanned']} | "
+                f"[green]Ingested: {stats['ingested']}[/green] | "
+                f"Skipped: {stats['skipped']}"
+            )
+            if stats["errors"]:
+                for err in stats["errors"]:
+                    console.print(f"[red]  {err}[/red]")
+            return True
+
         elif cmd == "/model":
             avail = self.router.get_available_providers()
             console.print(f"Available providers: {', '.join(avail)}")
@@ -167,10 +226,75 @@ class Agent:
             return True
 
         elif cmd == "/providers":
-            for name in ["openai", "groq", "mistral", "ollama"]:
-                prov = self.router.providers.get(name)
-                status = "[green]available[/green]" if (prov and prov.is_available()) else "[red]unavailable[/red]"
+            status_map = self.router.get_provider_status()
+            available = sum(1 for v in status_map.values() if v)
+            console.print(f"[bold]Providers: {available}/{len(status_map)} available[/bold]")
+            for name, is_avail in sorted(status_map.items()):
+                color = PROVIDER_COLORS.get(name, "white")
+                status = f"[{color}]available[/{color}]" if is_avail else "[red]unavailable[/red]"
                 console.print(f"  {name}: {status}")
+            return True
+
+        elif cmd == "/threads":
+            threads = self.memory.list_threads()
+            if threads:
+                console.print(Panel(
+                    "\n".join(
+                        f"{'>' if t['is_active'] else ' '} {t['id'][:8]}  "
+                        f"{t['name']}  [dim]{t['updated_at'][:16]}[/dim]"
+                        for t in threads
+                    ),
+                    title="Conversation Threads",
+                    border_style="blue",
+                ))
+            else:
+                console.print("[dim]No threads yet.[/dim]")
+            return True
+
+        elif cmd.startswith("/thread "):
+            parts = user_input[8:].strip().split(" ", 1)
+            subcmd = parts[0].lower()
+            arg = parts[1] if len(parts) > 1 else ""
+
+            if subcmd == "new":
+                name = arg.strip() if arg else None
+                tid = self.memory.new_thread(name)
+                console.print(f"[green]New thread created: {tid[:8]}[/green]")
+            elif subcmd == "switch" and arg:
+                # Allow partial ID match
+                target = arg.strip()
+                threads = self.memory.list_threads()
+                match = None
+                for t in threads:
+                    if t["id"].startswith(target) or t["name"] == target:
+                        match = t["id"]
+                        break
+                if match:
+                    self.memory.switch_thread(match)
+                    console.print(f"[green]Switched to thread {match[:8]}[/green]")
+                else:
+                    console.print(f"[red]Thread not found: {target}[/red]")
+            else:
+                console.print("[dim]Usage: /thread new [name] | /thread switch <id>[/dim]")
+            return True
+
+        elif cmd == "/memory":
+            stats = self.memory.get_memory_stats()
+            stat_text = (
+                f"Backend: {stats['backend']}\n"
+                f"Current thread: {stats['current_thread'][:8] if stats['current_thread'] else 'none'}\n"
+                f"Threads: {stats['threads']}\n"
+                f"Messages: {stats['messages']}\n"
+                f"Facts: {stats['facts']}\n"
+                f"Summaries: {stats['summaries']}\n"
+                f"Ingested files: {stats['ingested_files']}\n"
+                f"ChromaDB entries: {stats['chromadb_entries']}"
+            )
+            if stats["categories"]:
+                stat_text += "\nFact categories: " + ", ".join(
+                    f"{k}({v})" for k, v in stats["categories"].items()
+                )
+            console.print(Panel(stat_text, title="Memory Stats", border_style="blue"))
             return True
 
         elif cmd == "/uncensored":
@@ -185,10 +309,11 @@ class Agent:
 
         elif cmd == "/clear":
             self.memory.clear()
-            console.print("[dim]Conversation cleared.[/dim]")
+            console.print("[dim]Conversation cleared (new thread started).[/dim]")
             return True
 
         elif cmd in ("/quit", "/exit"):
+            self.memory.close()
             console.print("[dim]Goodbye![/dim]")
             sys.exit(0)
 
@@ -229,7 +354,7 @@ class Agent:
             if self._handle_command(user_input):
                 return
 
-        # Add user message to memory
+        # Add user message to memory (persisted to SQLite)
         self.memory.add_message("user", user_input)
 
         # Check if uncensored mode forces Ollama
@@ -262,40 +387,46 @@ class Agent:
 
         # Get tool definitions for providers that support function calling
         tools_schema = None
-        if prov_name in ("openai", "groq", "mistral"):
+        prov_obj = self.router.providers.get(prov_name)
+        if prov_obj and getattr(prov_obj, '_supports_tools', True):
             tools_schema = self.tools.get_openai_tools()
 
-        # RAG context injection: if RAG is initialized, search for relevant docs
+        # -----------------------------------------------------------
+        # Context injection: memory-first approach
+        # Pull relevant context from ALL sources BEFORE calling the LLM
+        # -----------------------------------------------------------
+
+        # 1. Long-term memory context (facts + past conversation summaries)
+        mem_context = self.memory.get_relevant_context(user_input, limit=5)
+
+        # 2. RAG context (ingested documents)
         rag_context = ""
         if self.rag:
             try:
                 results = self.rag.query(user_input, n_results=3)
                 if results:
-                    rag_context = "\n\n---\nRelevant context from your documents:\n"
+                    rag_parts = []
                     for r in results:
-                        rag_context += f"\n[Source: {r['source']}]\n{r['text'][:500]}\n"
+                        rag_parts.append(f"[Source: {r['source']}]\n{r['text'][:500]}")
+                    rag_context = "RELEVANT DOCUMENTS:\n" + "\n\n".join(rag_parts)
             except Exception:
                 pass
 
-        # Memory context: recall relevant long-term memories
-        mem_context = ""
-        try:
-            memories = self.memory.recall(query=user_input, limit=3)
-            if memories:
-                mem_context = "\n\n---\nRelevant memories:\n"
-                for m in memories:
-                    mem_context += f"- {m['fact']}\n"
-        except Exception:
-            pass
-
-        # Build messages with context injected into system prompt
+        # Build messages with context injected
         messages = self.memory.get_messages()
-        if rag_context or mem_context:
-            # Inject context into system message
+
+        # Inject memory + RAG context into the system prompt
+        extra_context = ""
+        if mem_context:
+            extra_context += "\n\n" + mem_context
+        if rag_context:
+            extra_context += "\n\n" + rag_context
+
+        if extra_context:
             for i, msg in enumerate(messages):
                 if msg["role"] == "system":
                     messages[i] = dict(msg)
-                    messages[i]["content"] += rag_context + mem_context
+                    messages[i]["content"] += extra_context
                     break
 
         # Call the provider with retry on failure
@@ -335,11 +466,27 @@ class Agent:
 
             # Check for tool calls
             if response.tool_calls:
+                # Normalize tool calls -- ensure every one has "type": "function"
+                normalized_tcs = []
+                for tc in response.tool_calls:
+                    if isinstance(tc, dict):
+                        ntc = dict(tc)
+                    else:
+                        ntc = {
+                            "id": getattr(tc, "id", ""),
+                            "function": {
+                                "name": tc.function.name if hasattr(tc, "function") else "",
+                                "arguments": tc.function.arguments if hasattr(tc, "function") else "",
+                            },
+                        }
+                    ntc.setdefault("type", "function")
+                    normalized_tcs.append(ntc)
+
                 # Add assistant message with tool calls
                 messages.append({
                     "role": "assistant",
                     "content": response.content or "",
-                    "tool_calls": response.tool_calls,
+                    "tool_calls": normalized_tcs,
                 })
 
                 # Execute tools and add results
@@ -355,7 +502,7 @@ class Agent:
                 console.print(Markdown(response.content))
                 console.print()
 
-                # Add to memory
+                # Add to persistent memory (saved to SQLite)
                 self.memory.add_message("assistant", response.content)
 
                 # Show cost
@@ -372,7 +519,7 @@ def main():
     """Entry point -- run the agent REPL."""
     console.print(Panel.fit(
         "[bold]Multi-Provider AI Agent[/bold]\n"
-        "OpenAI + Groq + Mistral + Ollama\n"
+        "12 Providers | Persistent Memory | Auto-Learning RAG\n"
         "Type /help for commands, /quit to exit",
         border_style="blue",
     ))
@@ -385,7 +532,12 @@ def main():
     else:
         console.print("[red]Warning: No providers available! Add API keys to .env[/red]")
 
-    console.print(f"[dim]Budget: {agent.budget.get_summary()}[/dim]")
+    # Show memory stats
+    stats = agent.memory.get_memory_stats()
+    console.print(
+        f"[dim]Memory: {stats['facts']} facts, {stats['threads']} threads, "
+        f"{stats['messages']} messages | Budget: {agent.budget.get_summary()}[/dim]"
+    )
     console.print()
 
     # REPL loop
@@ -398,6 +550,7 @@ def main():
         except KeyboardInterrupt:
             console.print("\n[dim]Use /quit to exit[/dim]")
         except EOFError:
+            agent.memory.close()
             break
 
 
